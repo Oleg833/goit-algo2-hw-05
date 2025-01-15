@@ -2,6 +2,7 @@ import hashlib
 import math
 import bitarray
 
+
 class BloomFilter:
     def __init__(self, size, num_hashes):
         self.size = size
@@ -13,7 +14,9 @@ class BloomFilter:
         """Generate multiple hash values for the item."""
         hash_results = []
         for i in range(self.num_hashes):
-            hash_value = int(hashlib.md5((item + str(i)).encode()).hexdigest(), 16) % self.size
+            hash_value = (
+                int(hashlib.md5((item + str(i)).encode()).hexdigest(), 16) % self.size
+            )
             hash_results.append(hash_value)
         return hash_results
 
@@ -25,6 +28,7 @@ class BloomFilter:
     def contains(self, item):
         """Check if an item is in the Bloom Filter."""
         return all(self.bit_array[hash_value] for hash_value in self._hashes(item))
+
 
 def check_password_uniqueness(bloom_filter, passwords):
     """Check uniqueness of passwords using the Bloom Filter."""
@@ -41,19 +45,16 @@ def check_password_uniqueness(bloom_filter, passwords):
             bloom_filter.add(password)
     return results
 
+
 if __name__ == "__main__":
-    # Ініціалізація фільтра Блума
     bloom = BloomFilter(size=1000, num_hashes=3)
 
-    # Додавання існуючих паролів
     existing_passwords = ["password123", "admin123", "qwerty123"]
     for password in existing_passwords:
         bloom.add(password)
 
-    # Перевірка нових паролів
     new_passwords_to_check = ["password123", "newpassword", "admin123", "guest"]
     results = check_password_uniqueness(bloom, new_passwords_to_check)
 
-    # Виведення результатів
     for password, status in results.items():
         print(f"Пароль '{password}' - {status}.")
