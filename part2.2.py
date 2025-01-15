@@ -1,6 +1,6 @@
 import time
 import json
-from mmh3 import hash as murmurhash
+from hashlib import sha256
 
 
 # Function to count unique IPs safely with execution time tracking
@@ -40,7 +40,7 @@ def count_unique_ips_hyperloglog(file_path, num_buckets=1024):
                     record = json.loads(line)
                     ip = record.get("remote_addr", "")
                     if ip:
-                        hash_value = murmurhash(ip)
+                        hash_value = int(sha256(ip.encode()).hexdigest(), 16)
                         bucket_index = hash_value % num_buckets
                         leading_zeros = len(
                             bin(hash_value // num_buckets).lstrip("0b").lstrip("0")
